@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MS Resume Builder</title>
+    <style>
+        /* General Body and HTML Styling */
+        body {
+            margin: 0;
+            font-family: 'Inter', sans-serif; /* Using Inter as a default professional font */
+            background-color: #000000; /* Complete Black */
+            color: #e0e0e0; /* Light gray for text */
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            min-height: 100vh; /* Ensure body takes full viewport height */
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Main MS Branding at Top Center */
+        .main-ms-branding {
+            text-align: center;
+            padding: 40px 20px 20px;
+            background-color: #000000; /* Ensure black background */
+            position: relative;
+            z-index: 10; /* Above main content, below modal */
+        }
+
+        .main-ms-branding h1 {
+            font-size: clamp(3rem, 10vw, 5rem); /* Responsive font size */
+            font-weight: bold;
+            color: #00bcd4; /* Teal base for the text, matching Start New Resume button */
+            position: relative;
+            overflow: hidden; /* Hide overflowing animation */
+            display: inline-block; /* Essential for text animation effects */
+            margin: 0;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .main-ms-branding h1::before {
+            content: attr(data-text); /* Use data-text attribute for the animated layer */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, #6a0dad, transparent, #6a0dad); /* Vibrant Purple blending gradient */
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: textFlow 8s linear infinite; /* Adjust duration and easing as needed */
+            pointer-events: none; /* Allow interaction with underlying text if needed */
+        }
+
+        @keyframes textFlow {
+            0% {
+                background-position: 200% 0;
+            }
+            100% {
+                background-position: -200% 0;
+            }
+        }
+
+        /* Page Heading */
+        .page-heading {
+            text-align: center;
+            color: #FFFFFF;
+            font-size: clamp(1.5rem, 5vw, 2.5rem);
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 40px;
+            padding: 0 20px;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            padding: 40px;
+            background-color: #000000; /* Complete black */
+            color: #e0e0e0;
+            flex-grow: 1; /* Allows it to take remaining vertical space */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+        }
+
+        .resume-form-container {
+            width: 100%;
+            max-width: 900px; /* Limit form width on larger screens */
+            padding: 0 20px; /* Horizontal padding for smaller screens */
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        /* Form Sections */
+        .form-section {
+            margin-bottom: 60px; /* Increased spacing between sections */
+            padding: 30px;
+            background-color: #1a1a1a; /* Dark charcoal for sections */
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Subtle shadow */
+        }
+
+        .form-section h2 {
+            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-weight: bold;
+            color: #FFFFFF;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #444444; /* Dark grey separator */
+            padding-bottom: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            font-size: 1rem;
+            color: #e0e0e0; /* Light gray for labels */
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="url"],
+        .form-group textarea,
+        .form-group select {
+            width: calc(100% - 24px); /* Full width minus padding */
+            padding: 12px;
+            margin-top: 5px;
+            background-color: #222222; /* Darker charcoal for inputs */
+            color: #FFFFFF;
+            border: 1px solid #444444; /* Dark grey border */
+            border-radius: 5px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #6a0dad; /* Vibrant purple on focus */
+        }
+
+        /* Placeholder Text Styling - Smaller and Lighter */
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.4); /* Lighter white for a subtle effect */
+            font-size: 0.85em; /* Slightly smaller than the input text itself */
+        }
+
+        ::-webkit-input-placeholder { /* Chrome, Safari */
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85em;
+        }
+
+        ::-moz-placeholder { /* Firefox */
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85em;
+            opacity: 1; /* Firefox sometimes defaults to a lower opacity */
+        }
+
+        :-ms-input-placeholder { /* Internet Explorer 10-11 */
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85em;
+        }
+
+        ::-ms-input-placeholder { /* Microsoft Edge */
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 0.85em;
+        }
+
+        /* Notes/Instructions */
+        .form-note {
+            font-size: 0.9rem;
+            color: #b0b0b0; /* Slightly lighter than labels, italic */
+            font-style: italic;
+            margin-top: -10px; /* Pull up closer to field */
+            margin-bottom: 20px;
+            display: block;
+        }
+        .form-advisory {
+            font-size: 0.85rem;
+            color: #ff5555; /* Red for advisory messages */
+            margin-top: 5px;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        /* Dynamic Section Styling (e.g., for Skills, Projects) */
+        .dynamic-section-item {
+            border: 1px solid #333333;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+            background-color: #222222; /* Slightly different background for individual items */
+            position: relative; /* For remove button positioning */
+        }
+
+        .dynamic-section-item .remove-item-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: #ff0000;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+            display: flex; /* For centering SVG */
+            align-items: center;
+            justify-content: center;
+            width: 30px; /* Ensure good touch target */
+            height: 30px;
+        }
+
+        .dynamic-section-item .remove-item-btn:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+
+        /* Add New/More Buttons */
+        .add-more-btn {
+            background-color: #333333; /* Dark charcoal */
+            color: #00bcd4; /* Complementary blue/teal */
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            display: block; /* Centered */
+            margin: 30px auto 0;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .add-more-btn:hover {
+            background-color: #444444;
+            color: #FFFFFF;
+        }
+
+        /* Date Selects (Month/Year) */
+        .date-select-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+        }
+
+        .date-select-group .form-group {
+            flex: 1; /* Equal width distribution */
+            min-width: 120px; /* Minimum width for date selects */
+            margin-bottom: 0; /* Remove extra margin from inner form-group */
+        }
+
+        .date-select-group select {
+            width: 100%; /* Make selects take full width of their flex item */
+        }
+
+        .date-select-group .present-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+            margin-top: 10px; /* Space from selects */
+        }
+
+        /* CGPA/Percentage Toggle */
+        .toggle-group {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 15px;
+        }
+
+        .toggle-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .toggle-group input[type="radio"] {
+            margin: 0;
+            transform: scale(1.2); /* Slightly larger radio buttons */
+            accent-color: #6a0dad; /* Purple accent for radio */
+        }
+
+        /* Final Confirmation Screen (Editable) - This section will not be used as a separate screen */
+        /* But the self-declaration and submit button will be at the end of the form */
+        .self-declaration {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #333333;
+        }
+
+        .self-declaration label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            font-size: 1rem;
+            color: #e0e0e0;
+            cursor: pointer;
+        }
+
+        .self-declaration input[type="checkbox"] {
+            margin-top: 4px;
+            transform: scale(1.2);
+            accent-color: #6a0dad;
+        }
+
+        #final-submit-button {
+            background-color: #6a0dad;
+            color: #FFFFFF;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            display: block;
+            margin: 30px auto 0;
+            transition: background-color 0.3s ease;
+        }
+
+        #final-submit-button:hover:not(:disabled) {
+            background-color: #7b2edc;
+        }
+
+        #final-submit-button:disabled {
+            background-color: #555555;
+            color: #999999;
+            cursor: not-allowed;
+        }
+
+        /* Confirmation Modal */
+        .modal-overlay {
+            display: none; /* Hidden by default */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black overlay */
+            z-index: 2000; /* Highest z-index */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: #222222; /* Dark charcoal */
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            color: #e0e0e0;
+            position: relative;
+        }
+
+        .modal-content h3 {
+            color: #FFFFFF;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .modal-content p {
+            color: #ff0000; /* Red for warning message */
+            font-size: 1rem;
+            margin-bottom: 25px;
+        }
+
+        .modal-checkbox-group {
+            text-align: left;
+            margin-bottom: 20px;
+        }
+
+        .modal-checkbox-group label {
+            display: flex;
+            align-items: flex-start; /* Align text with top of checkbox */
+            gap: 10px;
+            margin-bottom: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+        }
+
+        .modal-checkbox-group input[type="checkbox"] {
+            margin-top: 4px;
+            transform: scale(1.2);
+            accent-color: #6a0dad; /* Purple accent for checkbox */
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 30px;
+        }
+
+        .modal-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-buttons .cancel-btn {
+            background-color: #555555;
+            color: #FFFFFF;
+        }
+
+        .modal-buttons .cancel-btn:hover {
+            background-color: #666666;
+        }
+
+        .modal-buttons .confirm-action-btn {
+            background-color: #ff0000; /* Red for destructive action */
+            color: #FFFFFF;
+        }
+
+        .modal-buttons .confirm-action-btn:hover:not(:disabled) {
+            background-color: #cc0000;
+        }
+
+        .modal-buttons .confirm-action-btn:disabled {
+            background-color: #555555;
+            color: #999999;
+            cursor: not-allowed;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 30px;
+            background-color: #1a1a1a; /* Dark charcoal */
+            margin-top: auto; /* Push footer to bottom */
+            width: 100%; /* Ensure full width */
+            box-sizing: border-box; /* Include padding in width */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        footer p {
+            margin: 0 0 20px;
+            color: #e0e0e0;
+            font-size: 0.95rem;
+        }
+
+        .whatsapp-btn {
+            background-color: #25D366; /* WhatsApp green */
+            color: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+            margin-bottom: 20px; /* Space between contact and new resume button */
+        }
+
+        .whatsapp-btn:hover {
+            background-color: #1da851; /* Darker green on hover */
+        }
+
+        .whatsapp-icon {
+            width: 20px;
+            height: 20px;
+            fill: white; /* Fill SVG icon with white */
+        }
+
+        .footer-start-new-resume-btn {
+            background-color: #00bcd4; /* Complementary blue/teal */
+            color: #1a1a1a; /* Dark charcoal text */
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            padding: 15px 30px;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            display: inline-block; /* Ensure it's not full width */
+            font-size: 1.1rem;
+            margin-top: 10px; /* Space from other footer content */
+        }
+
+        .footer-start-new-resume-btn:hover {
+            background-color: #00a2e8; /* Slightly darker blue/teal on hover */
+            color: #FFFFFF;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px; /* Adjust padding */
+            }
+            .resume-form-container {
+                padding: 0; /* No horizontal padding on very small screens */
+            }
+            .main-ms-branding {
+                padding: 20px 10px 10px; /* Adjust padding */
+            }
+            .page-heading {
+                margin-top: 10px;
+                margin-bottom: 30px;
+            }
+            .form-section {
+                padding: 20px;
+                margin-bottom: 40px; /* Adjust spacing */
+            }
+            .form-section h2 {
+                font-size: 1.5rem;
+                margin-bottom: 20px;
+            }
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                width: calc(100% - 20px); /* Adjust padding */
+                padding: 10px;
+            }
+            .date-select-group {
+                flex-direction: column; /* Stack month/year dropdowns */
+                gap: 10px;
+            }
+            .date-select-group .form-group {
+                min-width: unset; /* Remove min-width for stacking */
+            }
+            .modal-content {
+                padding: 25px;
+            }
+            .modal-content h3 {
+                font-size: 1.5rem;
+            }
+            .modal-buttons {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .modal-buttons button {
+                width: 100%;
+            }
+            #final-submit-button {
+                padding: 12px 20px;
+                font-size: 1rem;
+            }
+            footer {
+                padding: 20px;
+            }
+            .dynamic-section-item .remove-item-btn {
+                top: 5px;
+                right: 5px;
+                width: 25px;
+                height: 25px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="main-content">
+        <div class="main-ms-branding">
+            <h1 data-text="MS">MS</h1>
+        </div>
+        <h2 class="page-heading">Build Your Resume</h2>
+        <div class="resume-form-container">
+            <form id="resumeForm">
+                <section id="personal-details" class="form-section">
+                    <h2>Personal Details</h2>
+                    <div class="form-group">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Your Name">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="your.email@mail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" placeholder="Your 10-digit number or with country code">
+                    </div>
+                    <div class="form-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city" placeholder="Your City">
+                    </div>
+                    <div class="form-group">
+                        <label for="state">State</label>
+                        <input type="text" id="state" name="state" placeholder="Your State">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedin">LinkedIn Link</label>
+                        <input type="url" id="linkedin" name="linkedin" placeholder="https://linkedin.com/in/yourprofile">
+                    </div>
+                    <div class="form-group">
+                        <label for="github">GitHub Link</label>
+                        <input type="url" id="github" name="github" placeholder="https://github.com/yourusername">
+                    </div>
+                    <div class="form-group">
+                        <label for="portfolio">Portfolio Link</label>
+                        <input type="url" id="portfolio" name="portfolio" placeholder="https://yourportfolio.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="job-description">Target Job Description</label>
+                        <textarea id="job-description" name="jobDescription" rows="8" placeholder="We are looking for a Junior RF Engineer to join our team in Pune. The ideal candidate will have a foundational understanding of RF circuit design, antenna theory, and wireless communication systems (4G/5G, Wi-Fi). Responsibilities include assisting in the testing and characterization of RF components, data analysis, and contributing to system integration. Familiarity with network analyzers, spectrum analyzers, and simulation tools (e.g., ADS, HFSS) is a plus. Strong analytical skills, attention to detail, and a passion for telecommunications technology are key. This role offers an excellent opportunity to grow in the field of radio frequency engineering."></textarea>
+                        <span class="form-note">Paste the full text of the job description you are applying for. Providing this is crucial for **MS** to optimize your resume for Applicant Tracking Systems (ATS) and tailor content. This field is optional.</span>
+                    </div>
+                </section>
+                <section id="summary-objective" class="form-section">
+                    <h2>Summary/Objective</h2>
+                    <div class="form-group">
+                        <label for="summary">Summary/Objective</label>
+                        <textarea id="summary" name="summary" rows="10" placeholder="Ambitious Electronics and Telecommunication Engineering student with a solid grasp of RF principles and embedded systems. Seeking to apply my technical skills and enthusiasm for wireless technologies in an entry-level engineering role."></textarea>
+                        <span class="form-note" id="summary-note">Describe yourself professionally in your own words. Share your key strengths, experiences, and career goals in detail. **MS** will refine this for a professional tone and ATS compatibility. Example: "Ambitious Electronics and Telecommunication Engineering student with a solid grasp of RF principles and embedded systems. Seeking to apply my technical skills and enthusiasm for wireless technologies in an entry-level engineering role."</span>
+                    </div>
+                </section>
+                <section id="skills" class="form-section">
+                    <h2>Skills</h2>
+                    <div id="skills-container">
+                        </div>
+                    <button type="button" class="add-more-btn" id="addSkillCategoryBtn">Add New Category</button>
+                    <span class="form-note">List all your skills within specific categories (e.g., 'Programming Languages', 'Software Tools'). Separate individual skills with commas. Provide as many details as possible about your skills. **MS** will categorize, infer additional skills from your experience, and optimize them for ATS matching.</span>
+                </section>
+                <section id="projects" class="form-section">
+                    <h2>Projects</h2>
+                    <div id="projects-container">
+                        </div>
+                    <button type="button" class="add-more-btn" id="addProjectBtn">Add New Project</button>
+                    <span class="form-note">Describe your projects comprehensively. For each point, provide detailed context and aim to quantify your contributions and results whenever possible (e.g., 'improved efficiency by 15%', 'reduced error rate by 10%'). Don't worry about perfect phrasing or ATS formatting; **MS** will enhance, rephrase, and organize your descriptions using strong action verbs for maximum impact and ATS compatibility. Example: "Designed and implemented a portable device using an ESP32 to map Wi-Fi signal strengths in a given area. Developed Python scripts for data visualization and analysis of collected RSSI values. Applied knowledge of wireless communication principles to identify signal propagation patterns and dead zones."</span>
+                </section>
+                <section id="experience" class="form-section">
+                    <h2>Experience</h2>
+                    <div id="experience-container">
+                        </div>
+                    <button type="button" class="add-more-btn" id="addExperienceBtn">Add New Experience</button>
+                    <span class="form-note">Detail your work experience, focusing on all your responsibilities and achievements. As with projects, provide specific examples and try to quantify your impact whenever possible (e.g., 'managed a team of 5', 'generated $X revenue'). **MS** will rephrase, optimize for ATS, and emphasize your accomplishments with strong action verbs. Example: "Assisted in field testing and data collection for cellular network optimization. Learned about base station components and basic antenna installation procedures. Gained exposure to industry practices in telecommunication network deployment and maintenance."</span>
+                </section>
+                <section id="education" class="form-section">
+                    <h2>Education</h2>
+                    <div id="education-container">
+                        </div>
+                    <button type="button" class="add-more-btn" id="addEducationBtn">Add New Education</button>
+                    <span class="form-note">Provide details about your academic background. Include degrees, institutions, locations, dates, and relevant coursework. Example: "Degree: Bachelor of Technology, Field: Electronics and Telecommunication Engineering, Institution: College of Engineering, Pune (COEP), Location: Pune, Maharashtra, Dates: Aug 2022 - May 2026, Relevant Coursework: Wireless Communication, RF & Microwave Engineering, Optical Fiber Communication, Data Communication Networks"</span>
+                </section>
+                <section id="certifications-awards" class="form-section">
+                    <h2>Certifications & Awards</h2>
+                    <div id="certifications-container">
+                        </div>
+                    <button type="button" class="add-more-btn" id="addCertificationBtn">Add More</button>
+                    <span class="form-note">List any relevant certifications, licenses, or awards received. Example: "Introduction to RF and Microwave Design – Coursera (2025), Winner - Tech Innovation Challenge (College Level) (2024)".</span>
+                </section>
+                <section id="languages" class="form-section">
+                    <h2>Languages</h2>
+                    <div id="languages-container">
+                        </div>
+                    <button type="button" class="add-more-btn" id="addLanguageBtn">Add More</button>
+                    <span class="form-note">List languages you are proficient in and your level of proficiency (e.g., English (Fluent), Hindi (Proficient), Marathi (Native)).</span>
+                </section>
+                <div class="self-declaration form-section">
+                    <h2>Finalize & Submit</h2>
+                    <label>
+                        <input type="checkbox" id="honestDetailsCheckbox"> I provided honest details.
+                    </label>
+                    <label>
+                        <input type="checkbox" id="shareDataCheckbox"> I agree to share my data with MS for resume purposes.
+                    </label>
+                    <button type="submit" id="final-submit-button" disabled>Submit</button>
+                </div>
+            </form>
+        </div>
+    </main>
+    <div class="modal-overlay" id="startNewResumeModal">
+        <div class="modal-content">
+            <h3>Confirm New Resume Creation</h3>
+            <p>Are you absolutely sure you want to clear all current resume data and start a new resume? This action cannot be undone.</p>
+            <div class="modal-checkbox-group">
+                <label>
+                    <input type="checkbox" id="confirmLostProgress"> I understand that all unsaved progress on my current resume will be permanently lost.
+                </label>
+                <label>
+                    <input type="checkbox" id="confirmNewResume"> I confirm I wish to clear the form and start a brand new resume.
+                </label>
+            </div>
+            <div class="modal-buttons">
+                <button type="button" class="cancel-btn" id="cancelNewResumeBtn">Cancel</button>
+                <button type="button" class="confirm-action-btn" id="confirmNewResumeActionBtn" disabled>Confirm</button>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Developed by MS</p>
+        <a href="https://wa.me/919623920055?text=Hello,%20I%20am%20trying%20to%20build%20a%20resume%20but%20I%20have%20some%20queries.%20Can%20you%20help%20me%3F"
+            target="_blank" class="whatsapp-btn">
+            <svg class="whatsapp-icon" viewBox="0 0 24 24">
+                <path
+                    d="M12.04 2C7.34 2 3.56 5.78 3.56 10.48c0 1.5.4 2.93 1.16 4.2l-1.2 4.64 4.73-1.24c1.23.67 2.62 1.04 4.09 1.04 4.7 0 8.48-3.78 8.48-8.48S16.74 2 12.04 2zm4.56 12.72c-.24.4-.5.43-.77.4L13.7 14c-.17-.07-.3-.12-.44.1-.15.2-.5.5-.67.67-.17.17-.33.1-.6-.08-.27-.17-.6-.25-1.14-.7-.4-.36-.8-1.02-1.13-1.65-.33-.63-.03-.6.2-.8.17-.17.37-.4.5-.57.13-.17.18-.3.08-.5-.1-.2-.37-.7-.52-1.13-.14-.34-.28-.28-.4-.28h-.4c-.13 0-.37.05-.57.2-.2.15-.76.75-.76 1.84s.78 2.13.88 2.27c.1.13 1.5.23 2.65-.66.95-.73 1.6-1.78 1.8-2.04.2-.27.1-.2.07-.3-.03-.1-.1-.2-.2-.27-.1-.07-.24-.12-.4-.17z" />
+            </svg>
+            Help me!
+        </a>
+        <button type="button" class="footer-start-new-resume-btn" id="startNewResumeBtn">Start New Resume</button>
+    </footer>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const resumeForm = document.getElementById('resumeForm');
+            const startNewResumeBtn = document.getElementById('startNewResumeBtn');
+            const startNewResumeModal = document.getElementById('startNewResumeModal');
+            const cancelNewResumeBtn = document.getElementById('cancelNewResumeBtn');
+            const confirmLostProgressCheckbox = document.getElementById('confirmLostProgress');
+            const confirmNewResumeCheckbox = document.getElementById('confirmNewResume');
+            const confirmNewResumeActionBtn = document.getElementById('confirmNewResumeActionBtn');
+
+            // Form submission checkboxes
+            const honestDetailsCheckbox = document.getElementById('honestDetailsCheckbox');
+            const shareDataCheckbox = document.getElementById('shareDataCheckbox');
+            const finalSubmitButton = document.getElementById('final-submit-button');
+
+            // Event listener for submit checkboxes
+            [honestDetailsCheckbox, shareDataCheckbox].forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    finalSubmitButton.disabled = !(honestDetailsCheckbox.checked && shareDataCheckbox.checked);
+                });
+            });
+
+            // Helper function to generate unique IDs for dynamic elements
+            let idCounter = 0;
+            const generateUniqueId = (prefix) => `${prefix}-${idCounter++}`;
+
+            // --- Dynamic Section Management Functions ---
+
+            // Month and Year options for date inputs
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const currentYear = new Date().getFullYear();
+            const years = Array.from({
+                length: currentYear - 1980 + 2
+            }, (_, i) => currentYear - i + 1); // From 1980 to next year
+
+            function createMonthYearDropdowns(prefix, itemIndex) {
+                const startMonthId = generateUniqueId(`${prefix}-start-month`);
+                const startYearId = generateUniqueId(`${prefix}-start-year`);
+                const endMonthId = generateUniqueId(`${prefix}-end-month`);
+                const endYearId = generateUniqueId(`${prefix}-end-year`);
+                const presentCheckboxId = generateUniqueId(`${prefix}-present`);
+
+                const dateGroup = document.createElement('div');
+                dateGroup.className = 'date-select-group';
+
+                dateGroup.innerHTML = `
+                    <div class="form-group">
+                        <label for="${startMonthId}">Start Month</label>
+                        <select id="${startMonthId}" name="${prefix}StartMonth-${itemIndex}">
+                            <option value="">Month</option>
+                            ${months.map((month, i) => `<option value="${month}">${month}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="${startYearId}">Start Year</label>
+                        <select id="${startYearId}" name="${prefix}StartYear-${itemIndex}">
+                            <option value="">Year</option>
+                            ${years.map(year => `<option value="${year}">${year}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="${endMonthId}">End Month</label>
+                        <select id="${endMonthId}" name="${prefix}EndMonth-${itemIndex}">
+                            <option value="">Month</option>
+                            ${months.map((month, i) => `<option value="${month}">${month}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="${endYearId}">End Year</label>
+                        <select id="${endYearId}" name="${prefix}EndYear-${itemIndex}">
+                            <option value="">Year</option>
+                            ${years.map(year => `<option value="${year}">${year}</option>`).join('')}
+                        </select>
+                    </div>
+                    <div class="present-checkbox-container">
+                        <input type="checkbox" id="${presentCheckboxId}" name="${prefix}Present-${itemIndex}">
+                        <label for="${presentCheckboxId}">Present</label>
+                    </div>
+                `;
+
+                const presentCheckbox = dateGroup.querySelector(`#${presentCheckboxId}`);
+                const endMonthSelect = dateGroup.querySelector(`#${endMonthId}`);
+                const endYearSelect = dateGroup.querySelector(`#${endYearId}`);
+
+                presentCheckbox.addEventListener('change', () => {
+                    const isDisabled = presentCheckbox.checked;
+                    endMonthSelect.disabled = isDisabled;
+                    endYearSelect.disabled = isDisabled;
+                    if (isDisabled) {
+                        endMonthSelect.value = '';
+                        endYearSelect.value = '';
+                    }
+                });
+
+                return dateGroup;
+            }
+
+
+            // --- Skills Section ---
+            const skillsContainer = document.getElementById('skills-container');
+            const addSkillCategoryBtn = document.getElementById('addSkillCategoryBtn');
+            let skillCategoryCount = 0;
+
+            function addSkillCategory() {
+                const categoryId = generateUniqueId('skill-category');
+                const skillCategoryNameId = generateUniqueId('skill-category-name');
+                const skillItemsId = generateUniqueId('skill-items');
+
+                const skillCategoryDiv = document.createElement('div');
+                skillCategoryDiv.className = 'dynamic-section-item';
+                skillCategoryDiv.setAttribute('data-id', categoryId);
+                skillCategoryDiv.innerHTML = `
+                    <button type="button" class="remove-item-btn" data-id="${categoryId}">✖</button>
+                    <div class="form-group">
+                        <label for="${skillCategoryNameId}">Category Name</label>
+                        <input type="text" id="${skillCategoryNameId}" name="skillCategoryName-${skillCategoryCount}" placeholder="e.g., Programming Languages">
+                    </div>
+                    <div class="form-group">
+                        <label for="${skillItemsId}">Skills (comma separated)</label>
+                        <textarea id="${skillItemsId}" name="skillItems-${skillCategoryCount}" rows="3" placeholder="e.g., Python, Java, C++, JavaScript"></textarea>
+                    </div>
+                `;
+                skillsContainer.appendChild(skillCategoryDiv);
+                skillCategoryCount++;
+            }
+
+            addSkillCategoryBtn.addEventListener('click', addSkillCategory);
+
+            // --- Projects Section ---
+            const projectsContainer = document.getElementById('projects-container');
+            const addProjectBtn = document.getElementById('addProjectBtn');
+            let projectCount = 0;
+
+            function addProject() {
+                const projectId = generateUniqueId('project');
+                const projectNameId = generateUniqueId('project-name');
+                const projectLinkId = generateUniqueId('project-link');
+                const projectDescriptionId = generateUniqueId('project-description');
+
+                const projectDiv = document.createElement('div');
+                projectDiv.className = 'dynamic-section-item';
+                projectDiv.setAttribute('data-id', projectId);
+                projectDiv.innerHTML = `
+                    <button type="button" class="remove-item-btn" data-id="${projectId}">✖</button>
+                    <div class="form-group">
+                        <label for="${projectNameId}">Project Title</label>
+                        <input type="text" id="${projectNameId}" name="projectName-${projectCount}" placeholder="e.g., Wi-Fi Signal Mapper">
+                    </div>
+                    <div class="form-group">
+                        <label for="${projectLinkId}">Project Link (Optional)</label>
+                        <input type="url" id="${projectLinkId}" name="projectLink-${projectCount}" placeholder="https://github.com/yourproject">
+                    </div>
+                `;
+                projectDiv.appendChild(createMonthYearDropdowns('project', projectCount)); // Add date fields
+                projectDiv.innerHTML += `
+                    <div class="form-group">
+                        <label for="${projectDescriptionId}">Project Description (Each point on new line)</label>
+                        <textarea id="${projectDescriptionId}" name="projectDescription-${projectCount}" rows="6" placeholder="Developed X to achieve Y, resulting in Z.&#10;Utilized technology A and B."></textarea>
+                    </div>
+                `;
+                projectsContainer.appendChild(projectDiv);
+                projectCount++;
+            }
+            addProjectBtn.addEventListener('click', addProject);
+
+            // --- Experience Section ---
+            const experienceContainer = document.getElementById('experience-container');
+            const addExperienceBtn = document.getElementById('addExperienceBtn');
+            let experienceCount = 0;
+
+            function addExperience() {
+                const experienceId = generateUniqueId('experience');
+                const jobTitleId = generateUniqueId('job-title');
+                const companyId = generateUniqueId('company');
+                const locationId = generateUniqueId('experience-location');
+                const responsibilitiesId = generateUniqueId('responsibilities');
+
+                const experienceDiv = document.createElement('div');
+                experienceDiv.className = 'dynamic-section-item';
+                experienceDiv.setAttribute('data-id', experienceId);
+                experienceDiv.innerHTML = `
+                    <button type="button" class="remove-item-btn" data-id="${experienceId}">✖</button>
+                    <div class="form-group">
+                        <label for="${jobTitleId}">Job Title</label>
+                        <input type="text" id="${jobTitleId}" name="jobTitle-${experienceCount}" placeholder="e.g., Junior RF Engineer">
+                    </div>
+                    <div class="form-group">
+                        <label for="${companyId}">Company/Organization</label>
+                        <input type="text" id="${companyId}" name="company-${experienceCount}" placeholder="e.g., Tech Solutions Inc.">
+                    </div>
+                    <div class="form-group">
+                        <label for="${locationId}">Location</label>
+                        <input type="text" id="${locationId}" name="experienceLocation-${experienceCount}" placeholder="e.g., Pune, Maharashtra">
+                    </div>
+                `;
+                experienceDiv.appendChild(createMonthYearDropdowns('experience', experienceCount));
+                experienceDiv.innerHTML += `
+                    <div class="form-group">
+                        <label for="${responsibilitiesId}">Responsibilities & Achievements (Each point on new line)</label>
+                        <textarea id="${responsibilitiesId}" name="responsibilities-${experienceCount}" rows="6" placeholder="Assisted in X, improving Y by Z%.&#10;Contributed to B project."></textarea>
+                    </div>
+                `;
+                experienceContainer.appendChild(experienceDiv);
+                experienceCount++;
+            }
+            addExperienceBtn.addEventListener('click', addExperience);
+
+            // --- Education Section ---
+            const educationContainer = document.getElementById('education-container');
+            const addEducationBtn = document.getElementById('addEducationBtn');
+            let educationCount = 0;
+
+            function addEducation() {
+                const educationId = generateUniqueId('education');
+                const degreeId = generateUniqueId('degree');
+                const fieldOfStudyId = generateUniqueId('field-of-study');
+                const institutionId = generateUniqueId('institution');
+                const educationLocationId = generateUniqueId('education-location');
+                const cgpaToggleName = generateUniqueId('cgpa-toggle');
+                const scoreId = generateUniqueId('score');
+                const relevantCourseworkId = generateUniqueId('relevant-coursework');
+                const advisoryMessageId = generateUniqueId('cgpa-advisory'); // New ID for advisory message
+
+                const educationDiv = document.createElement('div');
+                educationDiv.className = 'dynamic-section-item';
+                educationDiv.setAttribute('data-id', educationId);
+                educationDiv.innerHTML = `
+                    <button type="button" class="remove-item-btn" data-id="${educationId}">✖</button>
+                    <div class="form-group">
+                        <label for="${degreeId}">Degree/Qualification</label>
+                        <input type="text" id="${degreeId}" name="degree-${educationCount}" placeholder="e.g., Bachelor of Technology">
+                    </div>
+                    <div class="form-group">
+                        <label for="${fieldOfStudyId}">Field of Study</label>
+                        <input type="text" id="${fieldOfStudyId}" name="fieldOfStudy-${educationCount}" placeholder="e.g., Electronics and Telecommunication Engineering">
+                    </div>
+                    <div class="form-group">
+                        <label for="${institutionId}">Institution Name</label>
+                        <input type="text" id="${institutionId}" name="institution-${educationCount}" placeholder="e.g., College of Engineering, Pune (COEP)">
+                    </div>
+                    <div class="form-group">
+                        <label for="${educationLocationId}">Location</label>
+                        <input type="text" id="${educationLocationId}" name="educationLocation-${educationCount}" placeholder="e.g., Pune, Maharashtra">
+                    </div>
+                `;
+                educationDiv.appendChild(createMonthYearDropdowns('education', educationCount));
+
+                educationDiv.innerHTML += `
+                    <div class="toggle-group">
+                        <label><input type="radio" name="cgpa-toggle-${educationId}" value="CGPA" checked> CGPA</label>
+                        <label><input type="radio" name="cgpa-toggle-${educationId}" value="Percentage"> Percentage</label>
+                    </div>
+                    <div class="form-group">
+                        <label for="${scoreId}">CGPA / Percentage</label>
+                        <input type="text" id="${scoreId}" name="score-${educationCount}" placeholder="e.g., 8.5 (for CGPA)">
+                        <span class="form-advisory" id="${advisoryMessageId}" style="display: none;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="${relevantCourseworkId}">Relevant Coursework (comma separated)</label>
+                        <textarea id="${relevantCourseworkId}" name="relevantCoursework-${educationCount}" rows="3" placeholder="e.g., Wireless Communication, RF & Microwave Engineering"></textarea>
+                    </div>
+                `;
+                educationContainer.appendChild(educationDiv);
+
+                // Handle CGPA/Percentage toggle logic
+                const radioButtons = educationDiv.querySelectorAll(`input[name="cgpa-toggle-${educationId}"]`);
+                const scoreLabel = educationDiv.querySelector(`label[for="${scoreId}"]`);
+                const scoreInput = educationDiv.querySelector(`#${scoreId}`);
+                const advisoryMessage = educationDiv.querySelector(`#${advisoryMessageId}`);
+
+                const updateScoreInputPlaceholder = () => {
+                    const selectedValue = educationDiv.querySelector(`input[name="cgpa-toggle-${educationId}"]:checked`).value;
+                    if (selectedValue === 'CGPA') {
+                        scoreLabel.textContent = 'CGPA';
+                        scoreInput.placeholder = 'e.g., 8.5';
+                        checkCGPAAdvisory(); // Check advisory when switching to CGPA
+                    } else {
+                        scoreLabel.textContent = 'Percentage';
+                        scoreInput.placeholder = 'e.g., 85%';
+                        advisoryMessage.style.display = 'none'; // Hide advisory for Percentage
+                    }
+                };
+
+                const checkCGPAAdvisory = () => {
+                    const selectedValue = educationDiv.querySelector(`input[name="cgpa-toggle-${educationId}"]:checked`).value;
+                    if (selectedValue === 'CGPA') {
+                        const cgpaValue = parseFloat(scoreInput.value);
+                        if (!isNaN(cgpaValue) && cgpaValue <= 7.5) {
+                            advisoryMessage.textContent = 'Advisory: A CGPA above 7.5 is generally considered ideal for resume impact. This is just a suggestion.';
+                            advisoryMessage.style.display = 'block';
+                        } else {
+                            advisoryMessage.style.display = 'none';
+                        }
+                    } else {
+                        advisoryMessage.style.display = 'none';
+                    }
+                };
+
+                radioButtons.forEach(radio => {
+                    radio.addEventListener('change', updateScoreInputPlaceholder);
+                });
+
+                scoreInput.addEventListener('input', checkCGPAAdvisory);
+
+                updateScoreInputPlaceholder(); // Set initial state
+                educationCount++;
+            }
+            addEducationBtn.addEventListener('click', addEducation);
+
+            // --- Certifications & Awards Section ---
+            const certificationsContainer = document.getElementById('certifications-container'); // Correct ID
+            const addCertificationBtn = document.getElementById('addCertificationBtn');
+            let certificationCount = 0;
+
+            function addCertification() {
+                const certificationId = generateUniqueId('certification');
+                const certNameId = generateUniqueId('cert-name');
+                const certYearId = generateUniqueId('cert-year');
+
+                const certificationDiv = document.createElement('div');
+                certificationDiv.className = 'dynamic-section-item';
+                certificationDiv.setAttribute('data-id', certificationId);
+                certificationDiv.innerHTML = `
+                    <button type="button" class="remove-item-btn" data-id="${certificationId}">✖</button>
+                    <div class="form-group">
+                        <label for="${certNameId}">Certification/Award Name</label>
+                        <input type="text" id="${certNameId}" name="certName-${certificationCount}" placeholder="e.g., Introduction to RF and Microwave Design – Coursera">
+                    </div>
+                    <div class="form-group">
+                        <label for="${certYearId}">Year Acquired/Awarded</label>
+                        <select id="${certYearId}" name="certYear-${certificationCount}">
+                            <option value="">Year</option>
+                            ${years.slice(0, 20).map(year => `<option value="${year}">${year}</option>`).join('')}
+                        </select>
+                    </div>
+                `;
+                certificationsContainer.appendChild(certificationDiv);
+                certificationCount++;
+            }
+            addCertificationBtn.addEventListener('click', addCertification);
+
+            // --- Languages Section ---
+            const languagesContainer = document.getElementById('languages-container');
+            const addLanguageBtn = document.getElementById('addLanguageBtn');
+            let languageCount = 0;
+
+            function addLanguage() {
+                const languageId = generateUniqueId('language');
+                const langNameId = generateUniqueId('lang-name');
+                const langProficiencyId = generateUniqueId('lang-proficiency');
+
+                const languageDiv = document.createElement('div');
+                languageDiv.className = 'dynamic-section-item';
+                languageDiv.setAttribute('data-id', languageId);
+                languageDiv.innerHTML = `
+                    <button type="button" class="remove-item-btn" data-id="${languageId}">✖</button>
+                    <div class="form-group">
+                        <label for="${langNameId}">Language</label>
+                        <input type="text" id="${langNameId}" name="langName-${languageCount}" placeholder="e.g., English">
+                    </div>
+                    <div class="form-group">
+                        <label for="${langProficiencyId}">Proficiency</label>
+                        <select id="${langProficiencyId}" name="langProficiency-${languageCount}">
+                            <option value="">Select Level</option>
+                            <option value="Native">Native</option>
+                            <option value="Fluent">Fluent</option>
+                            <option value="Proficient">Proficient</option>
+                            <option value="Intermediate">Intermediate</option>
+                            <option value="Basic">Basic</option>
+                        </select>
+                    </div>
+                `;
+                languagesContainer.appendChild(languageDiv);
+                languageCount++;
+            }
+            addLanguageBtn.addEventListener('click', addLanguage);
+
+
+            // --- General Remove Item Function ---
+            // Event delegation for dynamically added remove buttons
+            document.addEventListener('click', (event) => {
+                if (event.target.classList.contains('remove-item-btn')) {
+                    const itemId = event.target.dataset.id;
+                    const itemToRemove = document.querySelector(`.dynamic-section-item[data-id="${itemId}"]`);
+                    if (itemToRemove) {
+                        itemToRemove.remove();
+                    }
+                }
+            });
+
+            // --- Collect Resume Data Function ---
+            function collectResumeData() {
+                const formData = new FormData(resumeForm);
+                const data = {};
+
+                // Personal Details
+                data.personalDetails = {
+                    name: formData.get('name'),
+                    email: formData.get('email'),
+                    phone: formData.get('phone'),
+                    city: formData.get('city'),
+                    state: formData.get('state'),
+                    linkedin: formData.get('linkedin'),
+                    github: formData.get('github'),
+                    portfolio: formData.get('portfolio'),
+                    jobDescription: formData.get('jobDescription')
+                };
+
+                // Summary/Objective
+                data.summary = formData.get('summary');
+
+                // Skills
+                data.skills = [];
+                const skillCategories = skillsContainer.querySelectorAll('.dynamic-section-item');
+                skillCategories.forEach((categoryDiv, index) => {
+                    const categoryName = categoryDiv.querySelector(`[name="skillCategoryName-${index}"]`).value;
+                    const skillItemsText = categoryDiv.querySelector(`[name="skillItems-${index}"]`).value;
+                    if (categoryName && skillItemsText) {
+                        data.skills.push({
+                            category: categoryName,
+                            items: skillItemsText.split(',').map(item => item.trim()).filter(item => item)
+                        });
+                    }
+                });
+
+                // Projects
+                data.projects = [];
+                const projectItems = projectsContainer.querySelectorAll('.dynamic-section-item');
+                projectItems.forEach((projectDiv, index) => {
+                    const projectName = projectDiv.querySelector(`[name="projectName-${index}"]`).value;
+                    const projectLink = projectDiv.querySelector(`[name="projectLink-${index}"]`).value;
+                    const projectDescription = projectDiv.querySelector(`[name="projectDescription-${index}"]`).value;
+
+                    const startMonth = projectDiv.querySelector(`[name="projectStartMonth-${index}"]`).value;
+                    const startYear = projectDiv.querySelector(`[name="projectStartYear-${index}"]`).value;
+                    const present = projectDiv.querySelector(`[name="projectPresent-${index}"]`).checked;
+                    const endMonth = present ? 'Present' : projectDiv.querySelector(`[name="projectEndMonth-${index}"]`).value;
+                    const endYear = present ? '' : projectDiv.querySelector(`[name="projectEndYear-${index}"]`).value;
+
+                    if (projectName && projectDescription && startMonth && startYear) { // Added date validation
+                        data.projects.push({
+                            title: projectName,
+                            link: projectLink,
+                            startDate: `${startMonth} ${startYear}`,
+                            endDate: present ? 'Present' : `${endMonth} ${endYear}`,
+                            description: projectDescription.split('\n').map(item => item.trim()).filter(item => item)
+                        });
+                    }
+                });
+
+                // Experience
+                data.experience = [];
+                const experienceItems = experienceContainer.querySelectorAll('.dynamic-section-item');
+                experienceItems.forEach((expDiv, index) => {
+                    const jobTitle = expDiv.querySelector(`[name="jobTitle-${index}"]`).value;
+                    const company = expDiv.querySelector(`[name="company-${index}"]`).value;
+                    const location = expDiv.querySelector(`[name="experienceLocation-${index}"]`).value;
+                    const startMonth = expDiv.querySelector(`[name="experienceStartMonth-${index}"]`).value;
+                    const startYear = expDiv.querySelector(`[name="experienceStartYear-${index}"]`).value;
+                    const present = expDiv.querySelector(`[name="experiencePresent-${index}"]`).checked;
+                    const endMonth = present ? 'Present' : expDiv.querySelector(`[name="experienceEndMonth-${index}"]`).value;
+                    const endYear = present ? '' : expDiv.querySelector(`[name="experienceEndYear-${index}"]`).value;
+                    const responsibilities = expDiv.querySelector(`[name="responsibilities-${index}"]`).value;
+
+                    if (jobTitle && company && responsibilities && startMonth && startYear) {
+                        data.experience.push({
+                            title: jobTitle,
+                            company: company,
+                            location: location,
+                            startDate: `${startMonth} ${startYear}`,
+                            endDate: present ? 'Present' : `${endMonth} ${endYear}`,
+                            responsibilities: responsibilities.split('\n').map(item => item.trim()).filter(item => item)
+                        });
+                    }
+                });
+
+
+                // Education
+                data.education = [];
+                const educationItems = educationContainer.querySelectorAll('.dynamic-section-item');
+                educationItems.forEach((eduDiv, index) => {
+                    const degree = eduDiv.querySelector(`[name="degree-${index}"]`).value;
+                    const fieldOfStudy = eduDiv.querySelector(`[name="fieldOfStudy-${index}"]`).value;
+                    const institution = eduDiv.querySelector(`[name="institution-${index}"]`).value;
+                    const location = eduDiv.querySelector(`[name="educationLocation-${index}"]`).value;
+                    const startMonth = eduDiv.querySelector(`[name="educationStartMonth-${index}"]`).value;
+                    const startYear = eduDiv.querySelector(`[name="educationStartYear-${index}"]`).value;
+                    const present = eduDiv.querySelector(`[name="educationPresent-${index}"]`).checked;
+                    const endMonth = present ? 'Present' : eduDiv.querySelector(`[name="educationEndMonth-${index}"]`).value;
+                    const endYear = present ? '' : eduDiv.querySelector(`[name="educationEndYear-${index}"]`).value;
+
+                    const scoreType = eduDiv.querySelector(`input[name="cgpa-toggle-${eduDiv.dataset.id}"]:checked`)?.value;
+                    const score = eduDiv.querySelector(`[name="score-${index}"]`).value;
+                    const relevantCoursework = eduDiv.querySelector(`[name="relevantCoursework-${index}"]`).value;
+
+                    if (degree && institution && startYear) {
+                        data.education.push({
+                            degree: degree,
+                            fieldOfStudy: fieldOfStudy,
+                            institution: institution,
+                            location: location,
+                            startDate: `${startMonth} ${startYear}`,
+                            endDate: present ? 'Present' : `${endMonth} ${endYear}`,
+                            score: score ? `${score} ${scoreType}` : '',
+                            relevantCoursework: relevantCoursework.split(',').map(item => item.trim()).filter(item => item)
+                        });
+                    }
+                });
+
+                // Certifications & Awards
+                data.certificationsAwards = [];
+                const certItems = certificationsContainer.querySelectorAll('.dynamic-section-item');
+                certItems.forEach((certDiv, index) => {
+                    const name = certDiv.querySelector(`[name="certName-${index}"]`).value;
+                    const year = certDiv.querySelector(`[name="certYear-${index}"]`).value;
+                    if (name) {
+                        data.certificationsAwards.push({
+                            name: name,
+                            year: year
+                        });
+                    }
+                });
+
+                // Languages
+                data.languages = [];
+                const languageItems = languagesContainer.querySelectorAll('.dynamic-section-item');
+                languageItems.forEach((langDiv, index) => {
+                    const name = langDiv.querySelector(`[name="langName-${index}"]`).value;
+                    const proficiency = langDiv.querySelector(`[name="langProficiency-${index}"]`).value;
+                    if (name && proficiency) {
+                        data.languages.push({
+                            name: name,
+                            proficiency: proficiency
+                        });
+                    }
+                });
+
+                return data;
+            }
+
+            // --- Form Submission (Direct WhatsApp) ---
+            resumeForm.addEventListener('submit', (event) => {
+                event.preventDefault(); // Prevent default form submission
+
+                const resumeData = collectResumeData();
+                const jsonString = JSON.stringify(resumeData, null, 2); // Pretty print JSON
+
+                const encodedData = encodeURIComponent(jsonString);
+                // Directly open WhatsApp with just the JSON data
+                window.open(`https://wa.me/919623920055?text=${encodedData}`, '_blank');
+            });
+
+
+            // --- Start New Resume Modal Logic ---
+            startNewResumeBtn.addEventListener('click', () => {
+                startNewResumeModal.style.display = 'flex'; // Show modal
+                // Reset checkboxes on modal open
+                confirmLostProgressCheckbox.checked = false;
+                confirmNewResumeCheckbox.checked = false;
+                confirmNewResumeActionBtn.disabled = true;
+            });
+
+            cancelNewResumeBtn.addEventListener('click', () => {
+                startNewResumeModal.style.display = 'none'; // Hide modal
+            });
+
+            // Enable/disable confirm button based on checkboxes
+            [confirmLostProgressCheckbox, confirmNewResumeCheckbox].forEach(checkbox => {
+                checkbox.addEventListener('change', () => {
+                    confirmNewResumeActionBtn.disabled = !(confirmLostProgressCheckbox.checked && confirmNewResumeCheckbox.checked);
+                });
+            });
+
+            confirmNewResumeActionBtn.addEventListener('click', () => {
+                if (confirmLostProgressCheckbox.checked && confirmNewResumeCheckbox.checked) {
+                    resumeForm.reset(); // Clear all form fields
+                    // Manually clear dynamically added sections
+                    skillsContainer.innerHTML = '';
+                    projectsContainer.innerHTML = '';
+                    experienceContainer.innerHTML = '';
+                    educationContainer.innerHTML = '';
+                    certificationsContainer.innerHTML = '';
+                    languagesContainer.innerHTML = '';
+
+                    // Reset counters for unique IDs
+                    idCounter = 0;
+                    skillCategoryCount = 0;
+                    projectCount = 0;
+                    experienceCount = 0;
+                    educationCount = 0;
+                    certificationCount = 0;
+                    languageCount = 0;
+
+                    // Re-initialize with one default item for better UX
+                    addSkillCategory();
+                    addProject();
+                    addEducation();
+
+                    // Disable submit button after reset
+                    finalSubmitButton.disabled = true;
+
+                    startNewResumeModal.style.display = 'none'; // Hide modal
+                }
+            });
+
+            // Initialize with one skill category, one project, one education, etc. for better UX
+            addSkillCategory();
+            addProject();
+            addEducation(); // Add one education section by default
+        });
+    </script>
+</body>
+</html>
